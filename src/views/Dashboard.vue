@@ -3,81 +3,68 @@
     <h1 class="text-h4 font-weight-bold mb-4 text-center">MMA Stats Dashboard</h1>
 
     <v-row>
-      <v-col cols="12" sm="6" md="4">
-        <v-card color="primary" dark>
-          <v-card-title>Total Users</v-card-title>
-          <v-card-text class="text-h4">{{ users.length }}</v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" sm="6" md="4">
-        <v-card color="green" dark>
-          <v-card-title>Active Users</v-card-title>
-          <v-card-text class="text-h4">{{ activeUsers }}</v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="4">
-        <v-card color="orange" dark>
-          <v-card-title>Total Matches</v-card-title>
-          <v-card-text class="text-h4">{{ totalMatches }}</v-card-text>
-        </v-card>
+      <v-col cols="12" sm="6" md="4" v-for="stat in statsData" :key="stat.title">
+        <stats-card :title="stat.title" :value="stat.value" :color="stat.color" />
       </v-col>
     </v-row>
 
-    <!-- User data table -->
     <v-row>
       <v-col cols="12">
-        <v-data-table
-          :headers="headers"
-          :items="users"
-          class="mt-6"
-          density="compact"
-          mobile-breakpoint="600"
-        >
-          <template v-slot:top>
-            <v-toolbar flat color="primary">
-              <v-toolbar-title>User Statistics</v-toolbar-title>
-              <v-spacer></v-spacer>
-            </v-toolbar>
-          </template>
-        </v-data-table>
+        <data-table :items="fighters" :headers="tableHeaders" title="Fighter Statistics" />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { ref, computed, onMounted } from "vue";
-import api from '@/services/axios';
-
+import { onMounted, computed } from 'vue'
+import { useFighters } from '@/composables/useFighters'
+import DataTable from '@/components/common/DataTable.vue'
+import StatsCard from '@/components/common/StatsCard.vue'
 
 export default {
+  components: {
+    DataTable,
+    StatsCard,
+  },
   setup() {
-    const users = ref([]);
-    const totalMatches = ref(120);
+    const { fighters, fetchFighters, totalWins, totalMatches } = useFighters()
 
-    onMounted(async () => {
-      try {
-        const response = await api.get("/users");
-        users.value = response.data;
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    });
+    const statsData = computed(() => [
+      {
+        title: 'Total Fighters',
+        value: fighters.value.length,
+        color: 'primary',
+      },
+      {
+        title: 'Total Wins',
+        value: totalWins.value,
+        color: 'green',
+      },
+      {
+        title: 'Total Matches',
+        value: totalMatches.value,
+        color: 'orange',
+      },
+    ])
 
-    const activeUsers = computed(() => users.value.filter(user => user.active).length);
+    const tableHeaders = [
+      { title: 'Name', key: 'name' },
+      { title: 'Wins', key: 'wins' },
+      { title: 'Losses', key: 'losses' },
+      { title: 'KOs', key: 'kos' },
+      { title: 'Submissions', key: 'submissions' },
+    ]
+
+    onMounted(() => {
+      fetchFighters()
+    })
 
     return {
-      users,
-      activeUsers,
-      totalMatches,
-      headers: [
-        { text: "Name", value: "name" },
-        { text: "Email", value: "email" },
-        { text: "Role", value: "role" },
-      ],
-    };
+      fighters,
+      statsData,
+      tableHeaders,
+    }
   },
-};
+}
 </script>

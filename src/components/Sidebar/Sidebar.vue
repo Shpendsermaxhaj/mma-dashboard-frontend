@@ -17,14 +17,10 @@
     class="custom-sidebar"
   >
     <v-list>
-      <!-- Expand Button only on desktop -->
-      <v-list-item v-if="!isMobile">
-        <v-btn icon @click="toggleSidebar" class="flat" aria-label="Toggle Sidebar">
-          <v-icon>{{ isCollapsed ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
-        </v-btn>
-
-
-        <span v-show="!isCollapsed" class="sidebar-text">MMA Stats</span>
+      <!-- Expand Button with icon and text on desktop -->
+      <v-list-item @click="toggleSidebar" v-if="!isMobile">
+        <v-icon>{{ isCollapsed ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
+        <span v-show="!isCollapsed" class="sidebar-text ml-3">MMA Stats</span>
       </v-list-item>
 
       <v-divider></v-divider>
@@ -44,38 +40,22 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { useScreenSize } from '@/composables/useScreenSize'
+import { useSidebar } from '@/composables/useSidebar'
 
 export default {
   setup() {
-    const drawer = ref(window.innerWidth >= 960);
-    const isCollapsed = ref(false);
-    const isMobile = ref(window.innerWidth < 960);
+    const { isMobile, drawer } = useScreenSize()
+    const { isCollapsed, toggleSidebar } = useSidebar()
 
-    // Update screen size
-    const updateScreenSize = () => {
-      isMobile.value = window.innerWidth < 960;
-      drawer.value = window.innerWidth >= 960;
-    };
-
-    // Toggle sidebar width
-    const toggleSidebar = () => {
-      isCollapsed.value = !isCollapsed.value;
-    };
-
-    // Add resize event listener
-    onMounted(() => {
-      window.addEventListener("resize", updateScreenSize);
-    });
-
-    // Cleanup resize event listener
-    onBeforeUnmount(() => {
-      window.removeEventListener("resize", updateScreenSize);
-    });
-
-    return { drawer, isCollapsed, isMobile, toggleSidebar };
+    return {
+      drawer,
+      isCollapsed,
+      isMobile,
+      toggleSidebar,
+    }
   },
-};
+}
 </script>
 
 <style scoped>
@@ -85,30 +65,28 @@ export default {
   transition: width 0.3s ease-in-out;
 }
 
-.sidebar-text {
-  display: inline-block;
+.v-list-item {
+  position: relative;
+}
+
+.v-list-item span {
+  position: absolute;
+  left: 40px;
   opacity: 1;
-  transition: opacity 1s ease-in-out;
+  transition: all 0.5s ease-in-out;
   white-space: nowrap;
+  overflow: hidden;
+}
+
+.v-navigation-drawer--rail .v-list-item span {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-10px);
+  transition: all 0.5s ease-in-out;
 }
 
 .v-list-item .v-icon {
-  margin-right: 12px;
+  position: relative;
+  z-index: 1;
 }
-
-
-.v-btn.flat {
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.v-btn.flat .v-icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-
 </style>
