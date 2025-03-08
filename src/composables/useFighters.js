@@ -6,7 +6,7 @@ export function useFighters() {
 
   const fetchFighters = async () => {
     try {
-      const response = await api.get('/users')
+      const response = await api.get('/fighters')
       fighters.value = response.data
     } catch (error) {
       console.error('Error fetching fighters:', error)

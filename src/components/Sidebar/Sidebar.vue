@@ -28,12 +28,12 @@
       <!-- Navigation items -->
       <v-list-item to="/">
         <v-icon>mdi-view-dashboard</v-icon>
-        <span v-if="!isCollapsed || isMobile" class="ml-3">Home</span>
+        <span class="ml-3">Home</span>
       </v-list-item>
 
       <v-list-item to="/about">
         <v-icon>mdi-account-group</v-icon>
-        <span v-if="!isCollapsed || isMobile" class="ml-3">About</span>
+        <span class="ml-3">About</span>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
@@ -62,7 +62,7 @@ export default {
 .custom-sidebar {
   background-color: #1e1e2d;
   color: white;
-  transition: width 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .v-list-item {
@@ -73,20 +73,27 @@ export default {
   position: absolute;
   left: 40px;
   opacity: 1;
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
   white-space: nowrap;
   overflow: hidden;
 }
 
-.v-navigation-drawer--rail .v-list-item span {
+/* Only hide text when sidebar is collapsed on desktop */
+.v-navigation-drawer--rail:not(.v-navigation-drawer--temporary) .v-list-item span {
   opacity: 0;
   visibility: hidden;
   transform: translateX(-10px);
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .v-list-item .v-icon {
   position: relative;
   z-index: 1;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Smooth transition for mobile drawer */
+.v-navigation-drawer--temporary {
+  transition: transform 0.3s ease-in-out !important;
 }
 </style>
