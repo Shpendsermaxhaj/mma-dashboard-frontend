@@ -90,11 +90,6 @@ const navigateToFighter = (fighterId) => {
   router.push({ name: 'fighter-profile', params: { id: fighterId } })
 }
 
-// Optional: Do something when search is updated (if needed)
-const searchUpdated = (value) => {
-  console.log('Search updated:', value)
-}
-
 // Fetch fighters when component mounts
 onMounted(() => {
   fetchFighters()
