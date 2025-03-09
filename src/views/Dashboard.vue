@@ -47,12 +47,14 @@
       <v-col cols="12">
         <v-card>
           <DataTable
-            :items="fighters"
             :headers="headers"
+            :items="fighters"
+            :loading="loading"
             title="Fighters"
-            toolbarColor="primary"
-            class="clickable-rows"
-            @click:row="navigateToFighter"
+            show-custom-header
+            enable-row-click
+            @update:search="searchUpdated"
+            @click:row="(event, item) => navigateToFighter(item.id)"
           >
             <template v-slot:item.wins="{ item }">
               <span class="text-success font-weight-bold">{{ item.wins }}</span>
@@ -68,10 +70,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFighters } from '@/composables/useFighters'
-import { useDebounce } from '@/composables/useDebounce'
 import DataTable from '@/components/common/DataTable.vue'
 
 const router = useRouter()
@@ -85,8 +86,8 @@ const headers = [
 ]
 
 // Function to navigate to fighter profile
-const navigateToFighter = (item) => {
-  router.push({ name: 'fighter-profile', params: { id: item.id } })
+const navigateToFighter = (fighterId) => {
+  router.push({ name: 'fighter-profile', params: { id: fighterId } })
 }
 
 // Fetch fighters when component mounts
@@ -96,15 +97,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.clickable-rows :deep(tbody tr) {
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.clickable-rows :deep(tbody tr:hover) {
-  background-color: #f5f5f5;
-}
-
 .text-success {
   color: #4caf50 !important;
 }
