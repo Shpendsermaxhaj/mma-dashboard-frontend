@@ -1,7 +1,10 @@
 <template>
-  <v-card :color="color" dark>
-    <v-card-title>{{ title }}</v-card-title>
-    <v-card-text class="text-h4">{{ value }}</v-card-text>
+  <v-card :color="color" dark class="mb-4">
+    <v-card-title class="text-h5">
+      {{ value }}
+      <v-icon v-if="icon" class="ml-2">{{ icon }}</v-icon>
+    </v-card-title>
+    <v-card-subtitle>{{ title }}</v-card-subtitle>
   </v-card>
 </template>
 
@@ -20,6 +23,10 @@ export default {
     color: {
       type: String,
       default: 'primary',
+    },
+    icon: {
+      type: String,
+      default: '',
     },
   },
 }

@@ -38,15 +38,12 @@ const { fetchFighterById, loading, error } = useFighters()
 const fighter = ref(null)
 
 const fetchFighter = async () => {
-  console.log('FighterProfile: Fetching fighter data...')
   const fighterId = route.params.id
-  console.log(`Fighter ID from route: ${fighterId}`)
   const data = await fetchFighterById(fighterId)
   fighter.value = data
 }
 
 onMounted(() => {
-  console.log('FighterProfile component mounted')
   fetchFighter()
 })
 </script>

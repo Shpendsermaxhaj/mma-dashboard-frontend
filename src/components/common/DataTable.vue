@@ -62,6 +62,8 @@
 
 <script>
 import { ref, computed, watch, onMounted } from 'vue'
+import { useDebounce } from '@/composables/useDebounce'
+import { UI_CONSTANTS } from '@/config/constants'
 
 export default {
   name: 'DataTable',
@@ -104,7 +106,7 @@ export default {
     },
     debounceDelay: {
       type: Number,
-      default: 300,
+      default: UI_CONSTANTS.DEBOUNCE_DELAY,
     },
     initialSearch: {
       type: String,
@@ -113,25 +115,16 @@ export default {
   },
   setup(props, { emit }) {
     const searchInput = ref(props.initialSearch)
-    const debouncedSearch = ref(props.initialSearch)
     const itemsPerPage = ref(5)
     const itemsPerPageOptions = [5, 10, 15, 20]
 
-    // Debounce implementation
-    let debounceTimeout = null
+    // Use the debounce composable
+    const { debounce } = useDebounce({ delay: props.debounceDelay })
+    const debouncedSearch = debounce(searchInput)
 
-    watch(searchInput, (newValue) => {
-      if (debounceTimeout) clearTimeout(debounceTimeout)
-
-      debounceTimeout = setTimeout(() => {
-        debouncedSearch.value = newValue
-        emit('update:search', newValue)
-      }, props.debounceDelay)
-    })
-
-    onMounted(() => {
-      // Initial debounce
-      debouncedSearch.value = searchInput.value
+    // Emit search changes
+    watch(debouncedSearch, (newValue) => {
+      emit('update:search', newValue)
     })
 
     // Combine classes
