@@ -46,31 +46,13 @@
     <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title class="table-header d-flex align-center">
-            <span>Fighters</span>
-            <v-spacer></v-spacer>
-            <v-text-field
-              v-model="searchInput"
-              append-icon="mdi-magnify"
-              label="Search"
-              single-line
-              hide-details
-              color="white"
-              density="compact"
-              style="max-width: 250px"
-              class="ml-4"
-            ></v-text-field>
-          </v-card-title>
-
-          <v-data-table
-            :headers="headers"
+          <DataTable
             :items="fighters"
-            :search="debouncedSearch"
-            :loading="loading"
-            loading-text="Loading fighters..."
-            no-data-text="No fighters found"
-            class="elevation-1 clickable-rows"
-            @click:row="(event, { item }) => navigateToFighter(item.id)"
+            :headers="headers"
+            title="Fighters"
+            toolbarColor="primary"
+            class="clickable-rows"
+            @click:row="navigateToFighter"
           >
             <template v-slot:item.wins="{ item }">
               <span class="text-success font-weight-bold">{{ item.wins }}</span>
@@ -78,7 +60,7 @@
             <template v-slot:item.losses="{ item }">
               <span class="text-error">{{ item.losses }}</span>
             </template>
-          </v-data-table>
+          </DataTable>
         </v-card>
       </v-col>
     </v-row>
@@ -90,18 +72,10 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFighters } from '@/composables/useFighters'
 import { useDebounce } from '@/composables/useDebounce'
+import DataTable from '@/components/common/DataTable.vue'
 
 const router = useRouter()
 const { fighters, loading, error, fetchFighters, totalWins, totalMatches } = useFighters()
-
-// Create the search input ref
-const searchInput = ref('')
-
-// Use the debounce composable with a 300ms delay
-const { debounce } = useDebounce({ delay: 300 })
-
-// Create a debounced version of the search input
-const debouncedSearch = debounce(searchInput)
 
 // Headers for the data table
 const headers = [
@@ -111,8 +85,8 @@ const headers = [
 ]
 
 // Function to navigate to fighter profile
-const navigateToFighter = (fighterId) => {
-  router.push({ name: 'fighter-profile', params: { id: fighterId } })
+const navigateToFighter = (item) => {
+  router.push({ name: 'fighter-profile', params: { id: item.id } })
 }
 
 // Fetch fighters when component mounts
@@ -122,11 +96,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.table-header {
-  background-color: #1976d2;
-  color: white;
-}
-
 .clickable-rows :deep(tbody tr) {
   cursor: pointer;
   transition: background-color 0.2s;
