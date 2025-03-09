@@ -8,37 +8,8 @@
 
     <!-- Stats Cards Row -->
     <v-row>
-      <!-- Total Fighters Card -->
-      <v-col cols="12" sm="6" md="4">
-        <v-card class="mb-4" color="primary" dark>
-          <v-card-title class="text-h5">
-            {{ fighters.length }}
-            <v-icon class="ml-2">mdi-account-group</v-icon>
-          </v-card-title>
-          <v-card-subtitle>Total Fighters</v-card-subtitle>
-        </v-card>
-      </v-col>
-
-      <!-- Total Wins Card -->
-      <v-col cols="12" sm="6" md="4">
-        <v-card class="mb-4" color="success" dark>
-          <v-card-title class="text-h5">
-            {{ totalWins }}
-            <v-icon class="ml-2">mdi-trophy</v-icon>
-          </v-card-title>
-          <v-card-subtitle>Total Wins</v-card-subtitle>
-        </v-card>
-      </v-col>
-
-      <!-- Total Matches Card -->
-      <v-col cols="12" sm="6" md="4">
-        <v-card class="mb-4" color="info" dark>
-          <v-card-title class="text-h5">
-            {{ totalMatches }}
-            <v-icon class="ml-2">mdi-mixed-martial-arts</v-icon>
-          </v-card-title>
-          <v-card-subtitle>Total Matches</v-card-subtitle>
-        </v-card>
+      <v-col cols="12" sm="6" md="4" v-for="(stat, index) in statsCards" :key="index">
+        <StatsCard :title="stat.title" :value="stat.value" :color="stat.color" :icon="stat.icon" />
       </v-col>
     </v-row>
 
@@ -53,7 +24,7 @@
             title="Fighters"
             show-custom-header
             enable-row-click
-            @update:search="searchUpdated"
+            :debounce-delay="UI_CONSTANTS.DEBOUNCE_DELAY"
             @click:row="(event, item) => navigateToFighter(item.id)"
           >
             <template v-slot:item.wins="{ item }">
@@ -70,13 +41,37 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFighters } from '@/composables/useFighters'
 import DataTable from '@/components/common/DataTable.vue'
+import StatsCard from '@/components/common/StatsCard.vue'
+import { UI_CONSTANTS } from '@/config/constants'
 
 const router = useRouter()
 const { fighters, loading, error, fetchFighters, totalWins, totalMatches } = useFighters()
+
+// Create a computed property for stats cards data
+const statsCards = computed(() => [
+  {
+    title: 'Total Fighters',
+    value: fighters.value.length,
+    color: 'primary',
+    icon: 'mdi-account-group',
+  },
+  {
+    title: 'Total Wins',
+    value: totalWins.value,
+    color: 'success',
+    icon: 'mdi-trophy',
+  },
+  {
+    title: 'Total Matches',
+    value: totalMatches.value,
+    color: 'info',
+    icon: 'mdi-mixed-martial-arts',
+  },
+])
 
 // Headers for the data table
 const headers = [
