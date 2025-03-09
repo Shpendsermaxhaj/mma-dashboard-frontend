@@ -1,89 +1,83 @@
-# MMA Stats Dashboard
+# MMA Dashboard Frontend
 
-A Vue.js dashboard application for visualizing MMA fighter statistics with a clean, responsive interface.
+A Vue.js dashboard application that displays MMA fighter statistics and profiles.
 
 ## Features
 
-- Real-time statistics visualization
+- Dashboard view with summary statistics
+- Fighter profiles with detailed stats
+- Searchable fighter database
 - Responsive design for mobile and desktop
-- Reusable components architecture
-- Collapsible sidebar navigation
-- Interactive data tables
 
 ## Tech Stack
 
-- Vue.js 3 (Composition API)
-- Vuetify 3
-- Vite
-- Axios
-- ESLint
-- Vitest
+- Vue 3 (Composition API)
+- Vuetify 3 for UI components
+- Vite as build tool
+- Axios for API communication
+- Vue Router for navigation
 
 ## Project Structure
 
 ```
 src/
-├── components/
-│   ├── common/
-│   │   ├── DataTable.vue
-│   │   └── StatsCard.vue
-│   └── Sidebar/
-│       └── Sidebar.vue
-├── composables/
-│   ├── useFighters.js
-│   ├── useScreenSize.js
-│   └── useSidebar.js
-├── services/
-│   └── axios.js
-└── views/
-    ├── Dashboard.vue
-    └── About.vue
+├── api/               # API endpoints organized by resource
+├── components/        # Reusable Vue components
+├── composables/       # Shared composition functions
+├── router/            # Vue Router configuration
+├── services/          # Core services (e.g. axios instance)
+├── views/             # Page components
+└── App.vue            # Root component
 ```
 
-## Setup and Installation
+## Getting Started
 
-1. Clone the repository:
+### Prerequisites
+
+- Node.js 16+ and npm
+
+### Installation
+
+1. Clone the repository
 
 ```bash
 git clone https://github.com/yourusername/mma-dashboard-frontend.git
+cd mma-dashboard-frontend
 ```
 
-2. Install dependencies:
+2. Install dependencies
 
 ```bash
 npm install
 ```
 
-3. Set up environment variables:
-   Create a `.env` file with:
+3. Create a `.env` file in the project root with:
 
 ```
-VITE_API_URL=your_api_url
+VITE_API_URL=http://localhost:3000
 ```
 
-4. Run development server:
+4. Start the development server
 
 ```bash
 npm run dev
 ```
 
-## Design Decisions
+5. Build for production
 
-- **Reusable Components**: Created generic DataTable and StatsCard components to maintain DRY principles and ensure consistency
-- **Composables**: Extracted common logic into composables for screen size detection and sidebar state management
-- **Responsive Design**: Mobile-first approach with adaptive layouts
-- **Dark Theme**: Enhanced visual appeal and reduced eye strain
-- **Performance**: Implemented efficient data fetching and state management
+```bash
+npm run build
+```
 
-## Available Scripts
+## Architecture
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run test:unit` - Run unit tests
-- `npm run lint` - Run ESLint
+This project uses Vue 3's Composition API to organize code by logical concerns:
 
-## API Integration
+- **Composables**: Business logic is extracted into reusable functions like `useFighters` and `useDebounce`
+- **Components**: UI is broken down into reusable components like `FighterDetail`
+- **Views**: Page-level components that compose smaller components
+- **API**: HTTP requests are organized by resource type
 
-The dashboard connects to a backend API serving MMA fighter statistics. The API endpoints include:
+## License
 
-- GET `/users` - Retrieve fighter statistics
+Made with ❤️ by Shpend Sermaxhaj
