@@ -8,6 +8,10 @@
     mobile-breakpoint="600"
     :items-per-page="itemsPerPage"
     :items-per-page-options="itemsPerPageOptions"
+    :loading="loading"
+    loading-text="Loading data..."
+    no-data-text="No data found"
+    @click:row="handleRowClick"
   >
     <template v-slot:top>
       <v-toolbar flat :color="toolbarColor">
@@ -29,6 +33,11 @@
           style="max-width: 150px"
         ></v-select>
       </v-toolbar>
+    </template>
+
+    <!-- Pass through custom slots -->
+    <template v-for="(_, slotName) in $slots" v-slot:[slotName]="slotData">
+      <slot :name="slotName" v-bind="slotData"></slot>
     </template>
   </v-data-table>
 </template>
@@ -55,16 +64,25 @@ export default {
       type: String,
       default: 'primary',
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup() {
+  setup(props, { emit }) {
     const search = ref('')
     const itemsPerPage = ref(5)
     const itemsPerPageOptions = [5, 10, 15, 20]
+
+    const handleRowClick = (event, item) => {
+      emit('click:row', item)
+    }
 
     return {
       search,
       itemsPerPage,
       itemsPerPageOptions,
+      handleRowClick,
     }
   },
 }
